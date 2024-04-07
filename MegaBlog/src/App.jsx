@@ -1,17 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux';
+import { login, logout } from './store/authSlice';
+import authService from './appwrite/auth';
 import './App.css'
+import { Footer, Header } from './components';
+import { Outlet } from 'react-router-dom';
 
 function App() {
-  const [count, setCount] = useState(0)
-  console.log(import.meta.env.VITE_APPWRITE_URL);
+  const [loading, setLoading] = useState(true)
+  const dispatch=useDispatch()
 
-  return (
-    <>
-     <h1>Welcome to mega blog</h1>
-    </>
-  )
+useEffect(()=>{
+  authService.getCurrentUser().then(userData=> userData ? dispatch(login(userData)) : dispatch(logout())).finally(()=> setLoading(false))
+},[])
+  return !loading ? (
+    <div className="min-h-screen flex flex-wrap content-between  bg-gray-400">
+      <div className="w-full block">
+        <Header/>
+      TODO:  {/* <Outlet/> */}
+        <Footer/>
+      </div>
+    </div>
+  ) : null
+  
 }
 
 export default App
